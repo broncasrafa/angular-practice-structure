@@ -43,25 +43,47 @@ jobs:
       - name: build
         run: npm run build
 
+  # open-pr-to-develop:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   steps:
+  #     - name: Install hub
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install hub -y
+
+  #     - name: Configure git
+  #       run: |
+  #         git config --global user.email "broncasrafa@gmail.com"
+  #         git config --global user.name "Rafael Francisco"
+
+  #     - name: checking out code
+  #       uses: actions/checkout@v3
+
+  #     - name: extract git commit data
+  #       uses: rlespinasse/git-commit-data-action@v1.x
+
+  #     - name: update author information
+  #       run: echo ${{ env.GIT_COMMIT_AUTHOR_NAME }} > AUTHOR
+
+  #     - name: open Pull Request
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+  #         if [[ $BRANCH_NAME == feature* ]]; then
+  #           TITLE="PR gerada automaticamente da branch $BRANCH_NAME"
+  #           BODY="Este PR foi aberto automaticamente pelo pipeline de CI."
+  #           hub pull-request -m "$TITLE" -m "$BODY" -b develop -h $BRANCH_NAME
+  #         else
+  #           echo "Not a feature branch. Skipping PR creation."
+  #         fi
+
+
   open-pr-to-develop:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      # - name: Install and configure hub
-      #   uses: actions/setup-hub@v2
-      #   with:
-      #     version: '2.14.2'
-
-      - name: Install hub
-        run: |
-          sudo apt-get update
-          sudo apt-get install hub -y
-
-      - name: Configure git
-        run: |
-          git config --global user.email "broncasrafa@gmail.com"
-          git config --global user.name "Rafael Francisco"
-
       - name: checking out code
         uses: actions/checkout@v3
 
@@ -71,15 +93,16 @@ jobs:
       - name: update author information
         run: echo ${{ env.GIT_COMMIT_AUTHOR_NAME }} > AUTHOR
 
-      - name: open Pull Request
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-          if [[ $BRANCH_NAME == feature* ]]; then
-            TITLE="PR gerada automaticamente da branch $BRANCH_NAME"
-            BODY="Este PR foi aberto automaticamente pelo pipeline de CI."
-            hub pull-request -m "$TITLE" -m "$BODY" -b develop -h $BRANCH_NAME
-          else
-            echo "Not a feature branch. Skipping PR creation."
-          fi
+      - name: create pull request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          branch: ${{ github.ref_name }}
+          base: develop
+          title: PR criado automaticamente. develop <- ${{ github.ref_name }}
+          commit-message: PR criado da branch ${{ github.ref_name }} para branch develop.
+          body: PR criado da branch ${{ github.ref_name }} para branch develop.
+          committer: ${{ env.GIT_COMMIT_AUTHOR }}
+          author: ${{ env.GIT_COMMIT_AUTHOR }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          signoff: false
+          delete-branch: false
