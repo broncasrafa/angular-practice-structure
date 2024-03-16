@@ -15,9 +15,9 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: build
-    strategy:
-      matrix:
-        node-version: [20]
+    # strategy:
+    #   matrix:
+    #     node-version: [20]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -59,8 +59,8 @@ jobs:
 
       - name: Configure git
         run: |
-          git config --global user.email "${{ env.GIT_COMMIT_AUTHOR_EMAIL }}"
-          git config --global user.name "${{ env.GIT_COMMIT_AUTHOR_NAME }}"
+          git config --global user.email "broncasrafa@gmail.com"
+          git config --global user.name "Rafael Francisco"
 
       - name: checking out code
         uses: actions/checkout@v3
