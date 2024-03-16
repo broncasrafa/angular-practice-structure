@@ -13,11 +13,11 @@ env:
 jobs:
   build:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    name: build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x, 20.x]
+    name: build
+    # strategy:
+    #   matrix:
+    #     node-version: [14.x, 16.x, 18.x, 20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -25,10 +25,10 @@ jobs:
       - name: checking out code
         uses: actions/checkout@v3
 
-      - name: setup Node.js $
+      - name: set up node.js
         uses: actions/setup-node@v3
         with:
-          node-version: $
+          node-version: '14.x'
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
