@@ -6,13 +6,13 @@ name: "1 - [FEAT] Build & PR"
 on:
   push:
     branches: [ "feature**" ]
-    
+
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
 jobs:
   build:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')    
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     name: build
     runs-on: ubuntu-latest
     strategy:
@@ -24,21 +24,21 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: checking out code
         uses: actions/checkout@v3
-        
+
       - name: setup Node.js $
         uses: actions/setup-node@v3
         with:
           node-version: $
           cache: 'npm'
           cache-dependency-path: package-lock.json
-          
+
       # Install the dependencies need to build the app
       - name: install dependencies
         run: npm ci
-        
-      - name: run tests
+
+      #- name: run tests
       # run: npm run test:ci
-      
+
       # Runs a set of commands to build
       - name: build
         run: npm run build
